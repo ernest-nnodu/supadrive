@@ -7,17 +7,17 @@ import lombok.Setter;
 @Setter
 public class Note {
 
-    private Integer noteId;
-    private String noteTitle;
-    private String noteDescription;
-    private Integer userId;
+    private Integer noteid;
+    private String notetitle;
+    private String notedescription;
+    private Integer userid;
 
     public Note() {
     }
 
-    public Note(String noteTitle, String noteDescription, Integer userId) {
-        this.noteTitle = noteTitle;
-        this.noteDescription = noteDescription;
-        this.userId = userId;
+    public Note(String notetitle, String notedescription, Integer userid) {
+        this.notetitle = notetitle;
+        this.notedescription = notedescription;
+        this.userid = userid;
     }
 }

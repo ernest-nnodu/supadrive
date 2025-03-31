@@ -8,11 +8,11 @@ CREATE TABLE IF NOT EXISTS USERS (
 );
 
 CREATE TABLE IF NOT EXISTS NOTES (
-    noteid serial PRIMARY KEY,
-    notetitle VARCHAR(20),
-    notedescription VARCHAR (1000),
-    userid INT,
-    foreign key (userid) references USERS(userid)
+    noteId serial PRIMARY KEY,
+    noteTitle VARCHAR(20),
+    noteDescription VARCHAR (1000),
+    userId INT,
+    foreign key (userId) references USERS(userId)
 );
 
 CREATE TABLE IF NOT EXISTS FILES (

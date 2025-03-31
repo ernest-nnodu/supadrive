@@ -34,12 +34,6 @@ public class AuthenticationService implements AuthenticationProvider {
             String encodedSalt = user.getSalt();
             String hashedPassword = hashService.getHashedValue(password, encodedSalt);
 
-            System.out.println("Hashed password -- " + hashedPassword);
-
-            System.out.println("Salt from database " + user.getSalt());
-            System.out.println("Username from database " + user.getUsername());
-            System.out.println("Password from database " + user.getPassword());
-
             if (user.getPassword().equals(hashedPassword)) {
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("USER"));
                 return new UsernamePasswordAuthenticationToken(username, password, authorities);
