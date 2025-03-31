@@ -30,6 +30,8 @@ public class SignUpController {
             return "signup";
         }
 
+        System.out.println("User model received in sign up controller....");
+        System.out.println(user);
         if (userService.addUser(user) > 0) {
             model.addAttribute("success", "You have successfully signed up!");
             return "signup";
@@ -43,6 +45,4 @@ public class SignUpController {
 
         return userService.getUser(username) != null;
     }
-
-
 }

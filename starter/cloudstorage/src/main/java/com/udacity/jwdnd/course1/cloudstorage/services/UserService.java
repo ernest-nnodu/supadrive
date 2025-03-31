@@ -19,13 +19,17 @@ public class UserService {
     }
 
     public int addUser(User user) {
+        System.out.println("Before adding hashing password in user service...");
+        System.out.println(user);
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
         String encodedSalt = Base64.getEncoder().encodeToString(salt);
         String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
+        System.out.println("Salt...." + encodedSalt);
+        System.out.println("Hashed password...." + hashedPassword);
         return userMapper.insert(new User(user.getFirstname(), user.getLastname(), user.getUsername(),
-                hashedPassword, encodedSalt));
+                encodedSalt, hashedPassword));
     }
 
     public User getUser(String username) {

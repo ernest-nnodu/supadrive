@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable()) //Allow H2 Console
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/signup", "/h2-console/**", "/css/**", "/js/**").permitAll() //These can accessed by everyone
-                        .requestMatchers("/chat").hasAnyAuthority("USER") //Only logged-in users can access /chat
+                        .requestMatchers("/home").hasAnyAuthority("USER") //Only logged-in users can access home page
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -35,6 +35,10 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/home", true)// Redirect to /chat after login
                         .failureUrl("/login?error=true") //Redirect on failure
                 )
+                .logout(logout -> logout.logoutSuccessUrl("/login?logout=true")//Redirect to login page after logout
+                        .invalidateHttpSession(true)  // Ensures session is cleared
+                        .deleteCookies("JSESSIONID")  // Removes session cookies
+                        .permitAll() )
                 .authenticationProvider(authenticationService)
                 .build();
     }
