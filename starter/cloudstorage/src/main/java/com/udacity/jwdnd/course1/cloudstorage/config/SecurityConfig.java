@@ -32,7 +32,7 @@ public class SecurityConfig {
                 )
                 .formLogin(login -> login
                         .loginPage("/login").permitAll() // Show custom login page
-                        .defaultSuccessUrl("/chat", true)// Redirect to /chat after login
+                        .defaultSuccessUrl("/home", true)// Redirect to /chat after login
                         .failureUrl("/login?error=true") //Redirect on failure
                 )
                 .authenticationProvider(authenticationService)
