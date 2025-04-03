@@ -15,7 +15,10 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
-    public int addNote(Note note) {
+    public int saveNote(Note note) {
+        if (note.getNoteid() != null) {
+            return noteMapper.update(note);
+        }
         return noteMapper.insert(note);
     }
 
