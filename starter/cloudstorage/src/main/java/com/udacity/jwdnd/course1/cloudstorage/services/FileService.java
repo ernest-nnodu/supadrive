@@ -3,7 +3,9 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -15,8 +17,19 @@ public class FileService {
         this.fileMapper = fileMapper;
     }
 
-    public int addFile(File file) {
-        return fileMapper.insert(file);
+    public int addFile(MultipartFile file, Integer userId) {
+        File fileToSave = new File();
+        try {
+            fileToSave.setFilename(file.getOriginalFilename());
+            fileToSave.setContenttype(file.getContentType());
+            fileToSave.setFilesize(String.valueOf(file.getSize()));
+            fileToSave.setUserid(userId);
+            fileToSave.setFiledata(file.getBytes());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return fileMapper.insert(fileToSave);
     }
 
     public File getFileById(Integer fileId) {

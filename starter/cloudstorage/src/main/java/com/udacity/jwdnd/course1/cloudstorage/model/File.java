@@ -7,21 +7,21 @@ import lombok.Setter;
 @Setter
 public class File {
 
-    private Integer fileId;
+    private Integer fileid;
     private String filename;
-    private String contentType;
-    private String fileSize;
-    private Integer userId;
-    private byte[] fileData;
+    private String contenttype;
+    private String filesize;
+    private Integer userid;
+    private byte[] filedata;
 
     public File() {
     }
 
-    public File(String filename, String contentType, String fileSize, Integer userId, byte[] fileData) {
+    public File(String filename, String contenttype, String filesize, Integer userid, byte[] filedata) {
         this.filename = filename;
-        this.contentType = contentType;
-        this.fileSize = fileSize;
-        this.userId = userId;
-        this.fileData = fileData;
+        this.contenttype = contenttype;
+        this.filesize = filesize;
+        this.userid = userid;
+        this.filedata = filedata;
     }
 }
