@@ -16,13 +16,13 @@ import java.util.List;
 
 @RequestMapping("/home")
 @Controller
-public class StorageController {
+public class HomeController {
 
     private final UserService userService;
     private final NoteService noteService;
     private final FileService fileService;
 
-    public StorageController(UserService userService, NoteService noteService, FileService fileService) {
+    public HomeController(UserService userService, NoteService noteService, FileService fileService) {
         this.userService = userService;
         this.noteService = noteService;
         this.fileService = fileService;
@@ -33,12 +33,21 @@ public class StorageController {
 
         if (authentication != null) {
             User loggedInUser = userService.getUser(authentication.getName());
-            List<Note> userNotes = noteService.getNotesByUserId(loggedInUser.getUserid());
-            List<File> userFiles = fileService.getFilesByUserId(loggedInUser.getUserid());
-            model.addAttribute("notes", userNotes);
-            model.addAttribute("currentNote", new Note());
-            model.addAttribute("files", userFiles);
+            int userId = loggedInUser.getUserid();
+            getUserFiles(userId, model);
+            getUserNotes(userId, model);
         }
         return "home";
+    }
+
+    private void getUserNotes(int userId, Model model) {
+        List<Note> userNotes = noteService.getNotesByUserId(userId);
+        model.addAttribute("notes", userNotes);
+        model.addAttribute("currentNote", new Note());
+    }
+
+    private void getUserFiles(int userId, Model model) {
+        List<File> userFiles = fileService.getFilesByUserId(userId);
+        model.addAttribute("files", userFiles);
     }
 }

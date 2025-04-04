@@ -42,19 +42,19 @@
                         </form>
                         <div class="table-responsive">
                             <table class="table table-striped" id="fileTable">
-                                <thead>
+                                <thead th:if="${files != null and #lists.size(files) > 0}">
                                     <tr>
                                         <th style="width: 20%" scope="col"></th>
                                         <th style="width: 80%" scope="col">File Name</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:each="file : ${files}">
                                 <tr>
                                     <td>
                                         <a target="_blank" class="btn btn-success">View</a>
                                         <a  class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row">ExampleFile.txt</th>
+                                    <th scope="row" th:text="${file.filename}">ExampleFile.txt</th>
                                 </tr>
                                 </tbody>
                             </table>
