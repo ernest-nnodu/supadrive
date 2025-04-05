@@ -19,6 +19,7 @@ public class FileService {
 
     public int addFile(MultipartFile file, Integer userId) {
         File fileToSave = new File();
+
         try {
             fileToSave.setFilename(file.getOriginalFilename());
             fileToSave.setContenttype(file.getContentType());
@@ -26,7 +27,11 @@ public class FileService {
             fileToSave.setUserid(userId);
             fileToSave.setFiledata(file.getBytes());
         } catch (IOException ex) {
-            ex.printStackTrace();
+            return -1;
+        }
+
+        if (fileNameExists(fileToSave.getFilename(), fileToSave.getUserid())) {
+            return 0;
         }
 
         return fileMapper.insert(fileToSave);
@@ -44,4 +49,7 @@ public class FileService {
         return fileMapper.deleteFile(fileId);
     }
 
+    private boolean fileNameExists(String filename, Integer userId) {
+        return fileMapper.getFileByName(filename, userId) != null;
+    }
 }

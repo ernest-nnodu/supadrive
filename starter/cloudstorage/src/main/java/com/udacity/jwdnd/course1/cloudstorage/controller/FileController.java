@@ -34,9 +34,14 @@ public class FileController {
         String username = authentication.getName();
         User currentUser = userService.getUser(username);
 
+        int outcome = fileService.addFile(file, currentUser.getUserid());
 
-        if (fileService.addFile(file, currentUser.getUserid()) > 0) {
+        if (outcome > 0) {
             model.addAttribute("success", "File was successfully saved");
+        } else if (outcome == 0) {
+            model.addAttribute("exist", "Your changes were not saved, filename already exists.");
+        } else {
+            model.addAttribute("error", "There was an error with file upload");
         }
         return "result";
     }
