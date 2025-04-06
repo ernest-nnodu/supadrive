@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS CREDENTIALS (
     url VARCHAR(255),
     username VARCHAR (20),
     password VARCHAR (255),
+    enckey VARCHAR(255),
     userid INT,
     foreign key (userid) references USERS(userId)
 );

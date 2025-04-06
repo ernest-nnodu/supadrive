@@ -475,3 +475,15 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/ernes/U
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 87 more
+2025-04-05 22:34:51.452238+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]TABLE CREDENTIALS"; expected "identifier"; SQL statement:
+DELETE TABLE CREDENTIALS [42001-224]
+2025-04-05 22:37:29.077415+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO CREDENTIALS (url, username, password, enckey, userid [*]VALUES (?, ?, ?, ? ?)"; expected ",, )"; SQL statement:
+INSERT INTO CREDENTIALS (url, username, password, enckey, userid VALUES (?, ?, ?, ? ?) [42001-224]
+2025-04-05 22:39:17.728977+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO CREDENTIALS (url, username, password, enckey, userid [*]VALUES (?, ?, ?, ?, ?)"; expected ",, )"; SQL statement:
+INSERT INTO CREDENTIALS (url, username, password, enckey, userid VALUES (?, ?, ?, ?, ?) [42001-224]
+2025-04-06 17:37:49.500977+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO CREDENTIALS (url, username, password, enckey, userid [*]VALUES (?, ?, ?, ?, ?)"; expected ",, )"; SQL statement:
+INSERT INTO CREDENTIALS (url, username, password, enckey, userid VALUES (?, ?, ?, ?, ?) [42001-224]
