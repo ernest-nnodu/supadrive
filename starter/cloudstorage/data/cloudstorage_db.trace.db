@@ -487,3 +487,6 @@ INSERT INTO CREDENTIALS (url, username, password, enckey, userid VALUES (?, ?, ?
 2025-04-06 17:37:49.500977+01:00 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO CREDENTIALS (url, username, password, enckey, userid [*]VALUES (?, ?, ?, ?, ?)"; expected ",, )"; SQL statement:
 INSERT INTO CREDENTIALS (url, username, password, enckey, userid VALUES (?, ?, ?, ?, ?) [42001-224]
+2025-04-07 21:58:52.949827+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "UPDATE CREDENTIALS SET url = ?, username = ?, enckey = ? [*]password = ? WHERE credentialid = ?"; SQL statement:
+UPDATE CREDENTIALS SET url = ?, username = ?, enckey = ? password = ? WHERE credentialid = ? [42000-224]

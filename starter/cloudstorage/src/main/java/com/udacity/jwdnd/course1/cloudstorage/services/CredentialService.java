@@ -21,22 +21,30 @@ public class CredentialService {
 
     public int saveCredential(Credential credential) {
 
-        System.out.println(credential.getUrl());
-        System.out.println(credential.getUsername());
-        System.out.println(credential.getPassword());
-        System.out.println(credential.getUserid());
-
         credential.setEnckey(generateKey());
         credential.setPassword(encryptionService.encryptValue(credential.getPassword(), credential.getEnckey()));
+
+        if (credential.getCredentialid() != null) {
+            return credentialMapper.update(credential);
+        }
         return credentialMapper.insert(credential);
     }
 
     public Credential getCredentialById(Integer credentialId) {
-        return credentialMapper.getCredentialById(credentialId);
+        Credential credential = credentialMapper.getCredentialById(credentialId);
+        credential.setTemppassword(encryptionService.decryptValue(credential.getPassword(), credential.getEnckey()));
+        return credential;
     }
 
     public List<Credential> getCredentialsByUserId(Integer userId) {
-        return credentialMapper.getCredentialsByUserId(userId);
+        List<Credential> credentials = credentialMapper.getCredentialsByUserId(userId);
+        if (!credentials.isEmpty()) {
+            credentials.forEach(credential -> {
+                credential.setTemppassword(
+                        encryptionService.decryptValue(credential.getPassword(), credential.getEnckey()));
+            });
+        }
+        return credentials;
     }
 
     private String generateKey() {

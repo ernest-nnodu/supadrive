@@ -24,7 +24,7 @@ public class CredentialController {
     }
 
     @PostMapping
-    public String addCredential(Authentication authentication, Model model,
+    public String saveCredential(Authentication authentication, Model model,
                                 @ModelAttribute("credential") Credential credential) {
         String username = authentication.getName();
         User loggedInUser = userService.getUser(username);

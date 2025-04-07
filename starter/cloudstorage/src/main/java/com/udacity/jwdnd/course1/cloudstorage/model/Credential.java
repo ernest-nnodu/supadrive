@@ -13,6 +13,7 @@ public class Credential {
     private String password;
     private String enckey;
     private Integer userid;
+    private String temppassword;
 
     public Credential() {
     }
@@ -23,5 +24,18 @@ public class Credential {
         this.password = password;
         this.enckey = enckey;
         this.userid = userid;
+    }
+
+    @Override
+    public String toString() {
+        return "Credential{" +
+                "credentialid=" + credentialid +
+                ", url='" + url + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", enckey='" + enckey + '\'' +
+                ", userid=" + userid +
+                ", temppassword='" + temppassword + '\'' +
+                '}';
     }
 }

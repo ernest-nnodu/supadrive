@@ -139,7 +139,11 @@
                                 <tbody th:each="credential : ${credentials}">
                                 <tr>
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
+                                        <button type="button" class="btn btn-success" th:data-credentialid="${credential.credentialid}"
+                                                th:data-credentialurl="${credential.url}"
+                                                th:data-credentialusername="${credential.username}"
+                                                th:data-credentialpassword="${credential.temppassword}"
+                                                onclick="openCredentialModal(this)">Edit</button>
                                         <a class="btn btn-danger">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${credential.url}">Example Credential URL</th>
@@ -210,6 +214,15 @@
                 $('#note-title').val(noteTitle ? noteTitle : '');
                 $('#note-description').val(noteDescription ? noteDescription : '');
                 $('#noteModal').modal('show');
+            }
+
+            function openCredentialModal(button) {
+                let credentialId = button.getAttribute("data-credentialid");
+                let credentialUrl = button.getAttribute("data-credentialurl");
+                let credentialUsername = button.getAttribute("data-credentialusername");
+                let credentialPassword = button.getAttribute("data-credentialpassword");
+
+                showCredentialModal(credentialId, credentialUrl, credentialUsername, credentialPassword);
             }
 
             // For opening the credentials modal
