@@ -7,9 +7,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/credentials")
 @Controller
@@ -32,6 +30,14 @@ public class CredentialController {
 
         if (credentialService.saveCredential(credential) > 0) {
             model.addAttribute("success", "Credential was successfully saved.");
+        }
+        return "result";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteCredential(@PathVariable("id") int credentialId, Model model) {
+        if (credentialService.deleteCredential(credentialId) > 0) {
+            model.addAttribute("success", "Credential was successfully deleted");
         }
         return "result";
     }

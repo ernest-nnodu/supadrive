@@ -53,4 +53,8 @@ public class CredentialService {
         random.nextBytes(key);
         return Base64.getEncoder().encodeToString(key);
     }
+
+    public int deleteCredential(int credentialId) {
+        return credentialMapper.delete(credentialId);
+    }
 }

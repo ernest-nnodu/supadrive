@@ -144,7 +144,7 @@
                                                 th:data-credentialusername="${credential.username}"
                                                 th:data-credentialpassword="${credential.temppassword}"
                                                 onclick="openCredentialModal(this)">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <a class="btn btn-danger" th:href="@{/credentials/delete/{id}(id=${credential.credentialid})}">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${credential.url}">Example Credential URL</th>
                                     <td th:text="${credential.username}">Example Credential Username</td>
