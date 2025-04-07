@@ -33,7 +33,7 @@ public class NoteController {
         return "result";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteNote(@PathVariable("id") int noteId, Model model) {
         if (noteService.deleteNote(noteId) > 0) {
             model.addAttribute("success", "Note was successfully deleted");

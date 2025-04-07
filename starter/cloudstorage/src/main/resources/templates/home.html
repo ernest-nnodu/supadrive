@@ -52,7 +52,7 @@
                                 <tr>
                                     <td>
                                         <a target="_blank" class="btn btn-success" th:href="@{/files/view/{id}(id=${file.fileid})}">View</a>
-                                        <a  class="btn btn-danger" th:href="@{/files/{id}(id=${file.fileid})}">Delete</a>
+                                        <a  class="btn btn-danger" th:href="@{/files/delete/{id}(id=${file.fileid})}">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${file.filename}">ExampleFile.txt</th>
                                 </tr>
@@ -81,7 +81,7 @@
                                                     th:data-notetitle="${note.notetitle}"
                                                     th:data-notedescription="${note.notedescription}"
                                                     onclick="openNoteModal(this)">Edit</button>
-                                            <a class="btn btn-danger" th:href="@{/notes/{id}(id=${note.noteid})}">Delete</a>
+                                            <a class="btn btn-danger" th:href="@{/notes/delete/{id}(id=${note.noteid})}">Delete</a>
                                         </td>
                                         <th scope="row" th:text="${note.notetitle}">Example Note Title</th>
                                         <td th:text="${note.notedescription}">Example Note Description </td>

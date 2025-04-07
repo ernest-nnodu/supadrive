@@ -46,7 +46,7 @@ public class FileController {
         return "result";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteFile(@PathVariable("id") int fileId, Model model) {
         if (fileService.deleteFile(fileId) > 0) {
             model.addAttribute("success", "File was successfully deleted");
