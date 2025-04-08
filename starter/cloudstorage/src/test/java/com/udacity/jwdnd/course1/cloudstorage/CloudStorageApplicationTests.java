@@ -29,6 +29,7 @@ class CloudStorageApplicationTests {
 
 	@BeforeEach
 	public void beforeEach() {
+
 		this.driver = new ChromeDriver();
 	}
 
