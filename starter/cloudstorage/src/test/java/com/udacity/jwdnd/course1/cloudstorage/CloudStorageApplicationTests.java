@@ -1,6 +1,12 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.pages.HomePage;
+import com.udacity.jwdnd.course1.cloudstorage.pages.LoginPage;
+import com.udacity.jwdnd.course1.cloudstorage.pages.ResultPage;
+import com.udacity.jwdnd.course1.cloudstorage.pages.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,9 +17,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.util.Assert;
 
 import java.io.File;
 import java.time.Duration;
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
@@ -24,6 +32,7 @@ class CloudStorageApplicationTests {
 
 	@BeforeAll
 	static void beforeAll() {
+
 		WebDriverManager.chromedriver().setup();
 	}
 
@@ -44,6 +53,114 @@ class CloudStorageApplicationTests {
 	public void getLoginPage() {
 		driver.get("http://localhost:" + this.port + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	@DisplayName("Unauthorized user cannot access homepage")
+	public void homePage_unauthorizedUserAccess_accessDenied() {
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	@DisplayName("Unauthorized user can access signup page")
+	public void signupPage_unauthorizedUserAccess_accessGranted() {
+		driver.get("http://localhost:" + this.port + "/signup");
+		Assertions.assertEquals("Sign Up", driver.getTitle());
+	}
+
+	@Test
+	@DisplayName("Unauthorized user can access login page")
+	public void loginPage_unauthorizedUserAccess_accessGranted() {
+		driver.get("http://localhost:" + this.port + "/login");
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	@DisplayName("Signup a new user")
+	public void signupPage_newUserDetailsProvided_userSignupSuccessful() {
+		driver.get("http://localhost:" + this.port + "/signup");
+		SignupPage signupPage = new SignupPage(driver);
+		signupPage.signupUser("peter", "pan", "peterpab", "pp");
+		Assertions.assertTrue(signupPage.getSuccessMessage().contains("You successfully signed up!"));
+	}
+
+	@Test
+	@DisplayName("Registered user can access home page")
+	public void loginPage_registeredUserProvided_homepageAccessGranted() {
+		login("peterpan", "pp");
+		Assertions.assertEquals("Home", driver.getTitle());
+	}
+
+	@Test
+	@DisplayName("User redirected to login page when logged out")
+	public void homePage_whenUserLogout_redirectToLoginPage() {
+		login("peterpan", "pp");
+		HomePage homePage = new HomePage(driver);
+		homePage.logout();
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	@DisplayName("Create a new note")
+	public void homePage_createNewNote_createdNoteDisplayed() {
+
+		String expectedTitle = "New Note";
+		String expectedDescription = "This is a new note";
+		int noteRowCount = getNoteRowCount();
+
+		createNote(expectedTitle, expectedDescription);
+
+		Note recentNote = getRecentNote();
+		Assertions.assertAll(() -> Assertions.assertEquals(expectedTitle, recentNote.getNotetitle()),
+				() -> Assertions.assertEquals(expectedDescription, recentNote.getNotedescription()),
+				() -> Assertions.assertEquals(noteRowCount + 1, getNoteRowCount()));
+	}
+
+	private void createNote(String title, String description) {
+
+		login("peterpan", "pp");
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		driver.findElement(By.id("nav-notes-tab")).click();
+
+		// Wait for the button to be clickable
+		WebElement newNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("new-note-btn")));
+		newNoteBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteModal")));
+		HomePage homePage = new HomePage(driver);
+		homePage.saveNote(title, description);
+	}
+
+	private Note getRecentNote() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		wait.until(ExpectedConditions.urlContains("/notes"));
+		driver.get("http://localhost:" + this.port + "/home");
+		HomePage homePage = new HomePage(driver);
+		WebElement noteNavigation = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
+		noteNavigation.click();
+		int rowCount = homePage.getNoteRowCount();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-title")));
+		String noteTitle = homePage.getNoteTitle(rowCount - 1);
+		String noteDescription = homePage.getNoteDescription(rowCount - 1);
+
+		Note note = new Note();
+		note.setNotetitle(noteTitle);
+		note.setNotedescription(noteDescription);
+
+		return note;
+	}
+
+	private int getNoteRowCount() {
+		HomePage homePage = new HomePage(driver);
+		return homePage.getNoteRowCount();
+	}
+
+	private void login(String username, String password) {
+		driver.get("http://localhost:" + this.port + "/login");
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.loginUser(username, password);
 	}
 
 	/**
@@ -201,7 +318,5 @@ class CloudStorageApplicationTests {
 		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
 
 	}
-
-
 
 }
