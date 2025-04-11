@@ -70,15 +70,15 @@ public class HomePage {
         PageFactory.initElements(driver, this);
     }
 
+    public void logout() {
+        logoutButton.click();
+    }
+
     public void saveNote(String title, String description) {
 
         enterField(noteTitleValueField, title);
         enterField(noteDescriptionValueField, description);
         saveNoteButton.click();
-    }
-
-    public void logout() {
-        logoutButton.click();
     }
 
     public int getNoteRowCount() {
@@ -113,6 +113,59 @@ public class HomePage {
         }
 
         return noteDeleteButton.get(index);
+    }
+
+    public void saveCredential(String url, String username, String password) {
+
+        enterField(credentialUrlValueField, url);
+        enterField(credentialUsernameValueField, username);
+        enterField(credentialPasswordValueField, password);
+        saveCredentialButton.click();
+    }
+
+    public int getCredentialRowCount() {
+        return credentialRows.size();
+    }
+
+    public String getCredentialUrl(int index) {
+        if (credentialUrl.isEmpty()) {
+            return "";
+        }
+        return credentialUrl.get(index).getText();
+    }
+
+    public String getCredentialUsername(int index) {
+        if (credentialUsername.isEmpty()) {
+            return "";
+        }
+        return credentialUsername.get(index).getText();
+    }
+
+    public String getCredentialPassword(int index) {
+        if (credentialPassword.isEmpty()) {
+            return "";
+        }
+        return credentialPassword.get(index).getText();
+    }
+
+    public String getCredentialUrlValueField() {
+        return credentialUrlValueField.getText();
+    }
+
+    public String getCredentialUsernameValueField() {
+        return credentialUsernameValueField.getText();
+    }
+
+    public String getCredentialPasswordValueField() {
+        return credentialPasswordValueField.getText();
+    }
+
+    public WebElement getCredentialEditButton(int index) {
+        return credentialEditButton.isEmpty() ? null : credentialEditButton.get(index);
+    }
+
+    public WebElement getCredentialDeleteButton(int index) {
+        return credentialDeleteButton.isEmpty() ? null : credentialDeleteButton.get(index);
     }
 
     private void enterField(WebElement webElement, String value) {

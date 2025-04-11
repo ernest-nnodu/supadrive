@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.pages.HomePage;
 import com.udacity.jwdnd.course1.cloudstorage.pages.LoginPage;
@@ -102,6 +103,7 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
 
+	/*----------------------------------------------------START OF NOTE TEST-------------------------------------------*/
 	@Test
 	@DisplayName("Create a new note")
 	public void homePage_createNewNote_createdNoteDisplayed() {
@@ -230,6 +232,169 @@ class CloudStorageApplicationTests {
 	private int getNoteRowCount() {
 		HomePage homePage = new HomePage(driver);
 		return homePage.getNoteRowCount();
+	}
+
+	/*---------------------------START OF CREDENTIAL TEST-----------------------------------------------*/
+	@Test
+	@DisplayName("Create a new credential")
+	public void homePage_createNewCredential_createdCredentialDisplayedAndPasswordEncrypted() {
+
+		String expectedUrl = "www.example.com";
+		String expectedUsername = "username";
+		String expectedPassword = "password";
+		int credentialRowCount = getCredentialRowCount();
+
+		createCredential(expectedUrl, expectedUsername, expectedPassword);
+
+		Credential recentCredential = getRecentCredential();
+		Assertions.assertAll(() -> Assertions.assertEquals(expectedUrl, recentCredential.getUrl()),
+				() -> Assertions.assertEquals(expectedUsername, recentCredential.getUsername()),
+				() -> Assertions.assertEquals(24, recentCredential.getPassword().length()),
+				() -> Assertions.assertEquals(credentialRowCount + 1, getCredentialRowCount()));
+	}
+
+	@Test
+	@DisplayName("Edit an existing credential")
+	public void homePage_editExistingCredential_editedCredentialUpdated() {
+		String expectedUrl = "www.update.org";
+		String expectedUsername = "update";
+		String password = "pass";
+
+		editCredential(expectedUrl, expectedUsername, password);
+
+		Credential recentCredential = getRecentCredential();
+		Assertions.assertAll(() -> Assertions.assertEquals(expectedUrl, recentCredential.getUrl()),
+				() -> Assertions.assertEquals(expectedUsername, recentCredential.getUsername()));
+	}
+
+	@Test
+	@DisplayName("Delete an existing credential")
+	public void homePage_deleteExistingCredential_credentialNoLongerDisplayed() {
+		int credentialRowCount = getCredentialRowCount();
+		deleteCredential();
+
+		if (credentialRowCount == 0) {
+			Assertions.assertEquals(credentialRowCount, getCredentialRowCount());
+		} else {
+			Assertions.assertEquals(credentialRowCount - 1, getCredentialRowCount());
+		}
+	}
+
+	private void createCredential(String url, String username, String password) {
+		navigateToCredentialTab();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		WebElement newCredentialBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("new-credential-btn")));
+		newCredentialBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credentialModal")));
+		HomePage homePage = new HomePage(driver);
+		homePage.saveCredential(url, username, password);
+	}
+
+	private void editCredential(String url, String username, String password) {
+		navigateToCredentialTab();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		int credentialRowCount = getCredentialRowCount();
+
+		if (credentialRowCount == 0) {
+			createCredential("www.temp.com", "temp", "pass");
+			wait.until(ExpectedConditions.urlContains("/credentials"));
+		}
+
+		driver.get("http://localhost:" + this.port + "/home");
+		HomePage homePage = new HomePage(driver);
+		WebElement credentialNavigation = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
+		credentialNavigation.click();
+		credentialRowCount = getCredentialRowCount();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("credential-url")));
+		WebElement editButton = homePage.getCredentialEditButton(credentialRowCount - 1);
+		editButton.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credentialModal")));
+		homePage.saveCredential(url, username, password);
+	}
+
+	private void deleteCredential() {
+		navigateToCredentialTab();
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		int credentialRowCount = getCredentialRowCount();
+
+		if (credentialRowCount == 0) {
+			createCredential("www.temp.com", "temp", "t123");
+			wait.until(ExpectedConditions.urlContains("/credentials"));
+		}
+
+		driver.get("http://localhost:" + this.port + "/home");
+		HomePage homePage = new HomePage(driver);
+		WebElement credentialNavigation = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
+		credentialNavigation.click();
+		credentialRowCount = getCredentialRowCount();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("credential-url")));
+		WebElement deleteButton = homePage.getCredentialDeleteButton(credentialRowCount - 1);
+		deleteButton.click();
+	}
+
+	private void navigateToCredentialTab() {
+		login("peterpan", "pp");
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		driver.findElement(By.id("nav-credentials-tab")).click();
+	}
+
+	private int getCredentialRowCount() {
+		HomePage homePage = new HomePage(driver);
+		return homePage.getCredentialRowCount();
+	}
+
+	private Credential getRecentCredential() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		wait.until(ExpectedConditions.urlContains("/credentials"));
+		driver.get("http://localhost:" + this.port + "/home");
+		HomePage homePage = new HomePage(driver);
+		WebElement credentialNavigation = wait.until(ExpectedConditions.elementToBeClickable(
+				By.id("nav-credentials-tab")));
+		credentialNavigation.click();
+		int rowCount = getCredentialRowCount();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("credential-url")));
+		String credentialUrl = homePage.getCredentialUrl(rowCount - 1);
+		String credentialUsername = homePage.getCredentialUsername(rowCount - 1);
+		String credentialPassword = homePage.getCredentialPassword(rowCount - 1);
+
+		Credential credential = new Credential();
+		credential.setUrl(credentialUrl);
+		credential.setUsername(credentialUsername);
+		credential.setPassword(credentialPassword);
+
+		return credential;
+	}
+
+	private Credential getPlainRecentCredential() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		wait.until(ExpectedConditions.urlContains("/credentials"));
+		driver.get("http://localhost:" + this.port + "/home");
+		HomePage homePage = new HomePage(driver);
+		WebElement credentialNavigation = wait.until(ExpectedConditions.elementToBeClickable(
+				By.id("nav-credentials-tab")));
+		credentialNavigation.click();
+		int credentialRowCount = getCredentialRowCount();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("credential-url")));
+		WebElement editButton = homePage.getCredentialEditButton(credentialRowCount - 1);
+		editButton.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteModal")));
+
+		String credentialUrl = homePage.getCredentialUrlValueField();
+		String credentialUsername = homePage.getCredentialUsernameValueField();
+		String credentialPassword = homePage.getCredentialPasswordValueField();
+
+		Credential credential = new Credential();
+		credential.setUrl(credentialUrl);
+		credential.setUsername(credentialUsername);
+		credential.setPassword(credentialPassword);
+
+		return credential;
 	}
 
 	private void login(String username, String password) {
