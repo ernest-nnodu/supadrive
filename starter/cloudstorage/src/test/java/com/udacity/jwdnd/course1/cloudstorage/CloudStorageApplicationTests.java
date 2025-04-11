@@ -18,6 +18,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.util.Assert;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import java.io.File;
 import java.time.Duration;
@@ -117,19 +118,93 @@ class CloudStorageApplicationTests {
 				() -> Assertions.assertEquals(noteRowCount + 1, getNoteRowCount()));
 	}
 
-	private void createNote(String title, String description) {
+	@Test
+	@DisplayName("Edit an existing note")
+	public void homePage_editExistingNote_editedNoteUpdated() {
+		String expectedTitle = "Update Note";
+		String expectedDescription = "Updated note";
 
+		editNote(expectedTitle, expectedDescription);
+
+		Note recentNote = getRecentNote();
+		Assertions.assertAll(() -> Assertions.assertEquals(expectedTitle, recentNote.getNotetitle()),
+				() -> Assertions.assertEquals(expectedDescription, recentNote.getNotedescription()));
+	}
+
+	@Test
+	@DisplayName("Delete an existing note")
+	public void homePage_deleteExistingNote_noteNoLongerDisplayed() {
+		int noteRowCount = getNoteRowCount();
+
+		deleteNote();
+
+		if (noteRowCount == 0) {
+			Assertions.assertEquals(noteRowCount, getNoteRowCount());
+		} else {
+			Assertions.assertEquals(noteRowCount - 1, getNoteRowCount());
+		}
+	}
+
+	private void navigateToNoteTab() {
 		login("peterpan", "pp");
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
 		driver.findElement(By.id("nav-notes-tab")).click();
+	}
 
-		// Wait for the button to be clickable
+	private void createNote(String title, String description) {
+		navigateToNoteTab();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement newNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("new-note-btn")));
 		newNoteBtn.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteModal")));
 		HomePage homePage = new HomePage(driver);
 		homePage.saveNote(title, description);
+	}
+
+	private void editNote(String title, String description) {
+		navigateToNoteTab();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		int noteRowCount = getNoteRowCount();
+
+		if (noteRowCount == 0) {
+			createNote("Temp Note", "Temporary note");
+			wait.until(ExpectedConditions.urlContains("/notes"));
+		}
+
+		driver.get("http://localhost:" + this.port + "/home");
+		HomePage homePage = new HomePage(driver);
+		WebElement noteNavigation = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
+		noteNavigation.click();
+		noteRowCount = getNoteRowCount();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-title")));
+		WebElement editButton = homePage.getNoteEditButton(noteRowCount - 1);
+		editButton.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteModal")));
+		homePage.saveNote(title, description);
+	}
+
+	private void deleteNote() {
+		navigateToNoteTab();
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		int noteRowCount = getNoteRowCount();
+
+		if (noteRowCount == 0) {
+			createNote("Temp Note", "Temporary note");
+			wait.until(ExpectedConditions.urlContains("/notes"));
+		}
+
+		driver.get("http://localhost:" + this.port + "/home");
+		HomePage homePage = new HomePage(driver);
+		WebElement noteNavigation = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
+		noteNavigation.click();
+		noteRowCount = getNoteRowCount();
+
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-title")));
+		WebElement deleteButton = homePage.getNoteDeleteButton(noteRowCount - 1);
+		deleteButton.click();
 	}
 
 	private Note getRecentNote() {
@@ -140,7 +215,7 @@ class CloudStorageApplicationTests {
 		HomePage homePage = new HomePage(driver);
 		WebElement noteNavigation = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
 		noteNavigation.click();
-		int rowCount = homePage.getNoteRowCount();
+		int rowCount = getNoteRowCount();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-title")));
 		String noteTitle = homePage.getNoteTitle(rowCount - 1);
 		String noteDescription = homePage.getNoteDescription(rowCount - 1);

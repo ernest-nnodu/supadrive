@@ -12,15 +12,6 @@ public class HomePage {
     @FindBy(id = "logout-btn")
     private WebElement logoutButton;
 
-    @FindBy(id = "nav-notes-tab")
-    private WebElement noteNavigationTab;
-
-    @FindBy(id = "nav-credentials-tab")
-    private WebElement credentialNavigationTab;
-
-    @FindBy(id = "new-note-btn")
-    private WebElement addNoteButton;
-
     @FindBy(className = "note-row")
     private List<WebElement> noteRows;
 
@@ -44,6 +35,36 @@ public class HomePage {
 
     @FindBy(id = "save-note-btn")
     private WebElement saveNoteButton;
+
+    @FindBy(className = "credential-row")
+    private List<WebElement> credentialRows;
+
+    @FindBy(className = "credential-edit-btn")
+    private List<WebElement> credentialEditButton;
+
+    @FindBy(className = "credential-delete-btn")
+    private List<WebElement> credentialDeleteButton;
+
+    @FindBy(className = "credential-url")
+    private List<WebElement> credentialUrl;
+
+    @FindBy(className = "credential-username")
+    private List<WebElement> credentialUsername;
+
+    @FindBy(className = "credential-password")
+    private List<WebElement> credentialPassword;
+
+    @FindBy(id = "credential-url")
+    private WebElement credentialUrlValueField;
+
+    @FindBy(id = "credential-username")
+    private WebElement credentialUsernameValueField;
+
+    @FindBy(id = "credential-password")
+    private WebElement credentialPasswordValueField;
+
+    @FindBy(id = "save-credential-btn")
+    private WebElement saveCredentialButton;
 
     public HomePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -76,6 +97,22 @@ public class HomePage {
             return "";
         }
         return noteDescription.get(index).getText();
+    }
+
+    public WebElement getNoteEditButton(int index) {
+        if (noteRows.isEmpty()) {
+            return null;
+        }
+
+        return noteEditButton.get(index);
+    }
+
+    public WebElement getNoteDeleteButton(int index) {
+        if (noteRows.isEmpty()) {
+            return null;
+        }
+
+        return noteDeleteButton.get(index);
     }
 
     private void enterField(WebElement webElement, String value) {
