@@ -21,6 +21,7 @@ public class FileController {
 
     private final UserService userService;
     private final FileService fileService;
+    private static final long MAX_FILE_SIZE = 1024 * 1024;
 
     public FileController(UserService userService, FileService fileService) {
         this.userService = userService;
@@ -30,6 +31,11 @@ public class FileController {
     @PostMapping
     public String saveFile(Authentication authentication, Model model,
                            @RequestParam("fileUpload") MultipartFile file) {
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            model.addAttribute("error", "File is too large, maximum size 1MB");
+            return "result";
+        }
 
         String username = authentication.getName();
         User currentUser = userService.getUser(username);

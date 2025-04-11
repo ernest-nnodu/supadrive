@@ -19,8 +19,6 @@ public class UserService {
     }
 
     public int addUser(User user) {
-        System.out.println("Before adding hashing password in user service...");
-        System.out.println(user);
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);

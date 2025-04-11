@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/signup")
@@ -24,17 +25,15 @@ public class SignUpController {
     }
 
     @PostMapping
-    public String signUpUser(User user, Model model) {
+    public String signUpUser(User user, Model model, RedirectAttributes redirectAttributes) {
         if (userNameExists(user.getUsername())) {
             model.addAttribute("error", "Username already exists!");
             return "signup";
         }
 
-        System.out.println("User model received in sign up controller....");
-        System.out.println(user);
         if (userService.addUser(user) > 0) {
-            model.addAttribute("success", "You have successfully signed up!");
-            return "signup";
+            redirectAttributes.addFlashAttribute("success", "You successfully signed up!");
+            return "redirect:/login";
         } else {
             model.addAttribute("error", "Error with registration, please try again later");
             return "signup";

@@ -14,6 +14,8 @@
             <form method="POST" th:action="@{/login}">
                 <div id="error-msg" class="alert alert-danger" th:if="${param.error}" th:text="${error}">
                 </div>
+                <div id="success-msg" class="alert alert-dark" th:if="${success}" th:text="${success}">
+                </div>
                 <div id="logout-msg" class="alert alert-dark" th:if="${param.logout}" th:text="${logout}">
                     You have been logged out.
                 </div>
